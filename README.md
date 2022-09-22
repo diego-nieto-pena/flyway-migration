@@ -102,3 +102,57 @@ Prints the details and status information about all the migrations. Lets you kno
 migrations have been applied and which still pending, when were executed successfully or fail.
 
 ![](img/info.png)
+
+```
+ mvn flyway:info
+ +-----------+---------+-------------------------+------+---------------------+---------+
+| Category  | Version | Description             | Type | Installed On        | State   |
++-----------+---------+-------------------------+------+---------------------+---------+
+| Versioned | 1.0     | create employee schema  | SQL  | 2022-09-21 17:22:14 | Success |
+| Versioned | 2.0     | create deparment schema | SQL  | 2022-09-21 17:22:14 | Success |
+| Versioned | 3.0     | adding user role tables | SQL  | 2022-09-21 17:22:14 | Success |
++-----------+---------+-------------------------+------+---------------------+---------+
+
+```
+
+### Validate
+
+Validates the applied migrations against the available ones.
+
+![](img/validate.png)
+
+Helps you verify that the migrations applied to the database match the ones available locally.
+
+Validate works by storing a checksum (CRC32 for SQL migrations) when a migration is executed. 
+The validate mechanism checks if the migration locally still has the same checksum as the
+migration already executed in the database. 
+
+### Undo
+![](img/undo.png)
+
+Undoes the most recently applied versioned migration.
+
+### Baseline
+
+Baselines an existing database, excluding all migrations up to and including baselineVersion
+
+![](img/baseline.png)
+
+### Repair
+
+Repairs the schema history table.
+
+![](img/repair.png)
+
+Tool to fix issues with the schema history table. It has a few main uses:
+
+- Remove failed migration entries (only for databases that do NOT support DDL transactions)
+- Realign the checksums, descriptions, and types of the applied migrations with the ones of the available migrations
+- Mark all missing migrations as deleted
+  - As a result, repair must be given the same locations as migrate!
+
+## Summary
+1. Database versions changes by using a collaborative like strategy.
+2. Automates the DB updates and unify them with the app build process.
+3. Flyway detects which version should be applied, is not necessary to specify the version. 
+   1. Uses a metadata table where all the scripts executed are referenced.
